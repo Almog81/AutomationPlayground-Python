@@ -6,13 +6,18 @@ from selenium.webdriver.common import alert
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.wait import WebDriverWait
 from selenium.webdriver.support import expected_conditions as ec
+from selenium.webdriver.common.action_chains import ActionChains
+
 
 driver = webdriver.Chrome()
-wait = WebDriverWait(driver, 20)
+wait = WebDriverWait(driver, 15)
+action = ActionChains(driver)
+
 
 @pytest.fixture(autouse=True, scope='session')
 def init_test():
     driver.maximize_window()
+    driver.implicitly_wait(20)
     yield
     # time.sleep(3)
     driver.quit()
@@ -63,3 +68,31 @@ def test05_AJAX_Data():
     wait.until(ec.visibility_of_element_located((By.CLASS_NAME, 'bg-success')))
     result = driver.find_element(By.CLASS_NAME, 'bg-success').text
     assert expected == result
+
+
+def test06_client_side_delay():
+    driver.get('http://uitestingplayground.com/clientdelay')
+    expected = "Data calculated on the client side."
+    driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
+    result = driver.find_element(By.CLASS_NAME, 'bg-success').text
+    assert expected == result
+
+
+def test07_click():
+    driver.get('http://uitestingplayground.com/click')
+    expected = "btn btn-success"
+    button = driver.find_element(By.ID, "badButton")
+    action.move_to_element(button).click().perform()
+    result = button.get_attribute("class")
+    assert expected == result
+
+
+def test08_text_input():
+    driver.get('http://uitestingplayground.com/textinput')
+    expected = "Almog Noach"
+    driver.find_element(By.ID, "newButtonName").send_keys(expected)
+    button = driver.find_element(By.ID, "updatingButton")
+    button.click()
+    result = button.text
+    assert expected == result
+
