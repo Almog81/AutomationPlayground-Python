@@ -6,17 +6,17 @@ from base import *
 def test01_dynamic_id():
     driver.get('http://uitestingplayground.com/dynamicid')
     btn = driver.find_element(By.XPATH, "//div[@class='container']/Button")
-    assert btn.text == "Button with Dynamic ID"
+    verifai_txt("Button with Dynamic ID", btn.text)
 
 
 def test02_class_attr():
     driver.get('http://uitestingplayground.com/classattr')
-    ex_txt = "Primary button pressed"
+    expected = "Primary button pressed"
     driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
     alr = driver.switch_to.alert
-    result_txt = alr.text
+    result = alr.text
     alr.accept()
-    assert ex_txt == result_txt
+    verifai_txt(expected, result)
 
 
 def test03_hidden_layers():
@@ -27,6 +27,7 @@ def test03_hidden_layers():
     try:
         driver.find_element(By.CSS_SELECTOR, ".btn-success").click()
         pytest.fail("Green Button not supposed to Be Hit Twice!")
+        screenshot("Green Button not supposed to Be Hit Twice!")
     except Exception:
         print("Green Button Can not Be Hit Twice!")
         pass
@@ -34,11 +35,11 @@ def test03_hidden_layers():
 
 def test04_load_delay():
     driver.get('http://uitestingplayground.com/')
-    url = "http://uitestingplayground.com/loaddelay"
+    expected = "http://uitestingplayground.com/loaddelay"
     driver.find_element(By.LINK_TEXT, "Load Delay").click()
     wait.until(ec.visibility_of_element_located((By.CSS_SELECTOR, '.btn-primary')))
     result = driver.current_url
-    assert url == result
+    verifai_txt(expected, result)
 
 
 def test05_AJAX_Data():
@@ -47,7 +48,7 @@ def test05_AJAX_Data():
     driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
     wait.until(ec.visibility_of_element_located((By.CLASS_NAME, 'bg-success')))
     result = driver.find_element(By.CLASS_NAME, 'bg-success').text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test06_client_side_delay():
@@ -55,7 +56,7 @@ def test06_client_side_delay():
     expected = "Data calculated on the client side."
     driver.find_element(By.CSS_SELECTOR, ".btn-primary").click()
     result = driver.find_element(By.CLASS_NAME, 'bg-success').text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test07_click():
@@ -64,7 +65,7 @@ def test07_click():
     button = driver.find_element(By.ID, "badButton")
     action.move_to_element(button).click().perform()
     result = button.get_attribute("class")
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test08_text_input():
@@ -74,7 +75,7 @@ def test08_text_input():
     button = driver.find_element(By.ID, "updatingButton")
     button.click()
     result = button.text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test09_scrollbars():
@@ -83,7 +84,7 @@ def test09_scrollbars():
     hiding_btn = driver.find_element(By.CSS_SELECTOR, ".btn.btn-primary")
     driver.execute_script("arguments[0].scrollIntoView(true);", hiding_btn)
     result = hiding_btn.text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test10_dynamic_table():
@@ -104,14 +105,14 @@ def test10_dynamic_table():
         else:
             y = y + 1
     result = cells[y].text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test11_verify_text():
     driver.get('http://uitestingplayground.com/verifytext')
     expected = "Welcome UserName!"
     result = driver.find_element(By.XPATH, "//span[normalize-space(.)='Welcome UserName!']").text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test12_progressbar():
@@ -126,7 +127,7 @@ def test12_progressbar():
         now = progress_bar.text
     stop_btn.click()
     result = progress_bar.text
-    assert expected == result
+    verifai_txt(expected, result)
 
 
 def test13_visibility():
@@ -159,4 +160,4 @@ def test13_visibility():
 
     expected = 8
     result = len(buttons)
-    assert expected == result
+    verifai_txt(expected, result)
