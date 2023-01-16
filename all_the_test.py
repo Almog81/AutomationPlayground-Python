@@ -27,7 +27,7 @@ def test03_hidden_layers():
     try:
         driver.find_element(By.CSS_SELECTOR, ".btn-success").click()
         pytest.fail("Green Button not supposed to Be Hit Twice!")
-    except Exception as e:
+    except Exception:
         print("Green Button Can not Be Hit Twice!")
         pass
 
@@ -126,4 +126,37 @@ def test12_progressbar():
         now = progress_bar.text
     stop_btn.click()
     result = progress_bar.text
+    assert expected == result
+
+
+def test13_visibility():
+    driver.get('http://uitestingplayground.com/visibility')
+    hide_btn = driver.find_element(By.ID, "hideButton")
+    buttons = driver.find_elements(By.XPATH, "//button[@type=\"button\"]")
+
+    # Create a list of buttons id names
+    visible_btn_id = []
+    for btn in buttons:
+        visible_btn_id.append(btn.get_attribute("id"))
+
+    # Click on Hide Button
+    hide_btn.click()
+    buttons = driver.find_elements(By.XPATH, "//button[@type=\"button\"]")
+
+    # Create a new list of buttons id names after hide_btn click
+    new_btn_id = []
+    for btn in buttons:
+        new_btn_id.append(btn.get_attribute("id"))
+    hide_btn.click()
+
+    # Checking if The Button Exist
+    for btn in visible_btn_id:
+        try:
+            x = new_btn_id.index(btn)
+            print(str(x) + ". " + btn + " fond but not visible")
+        except ValueError:
+            print(str(x) + ". " + btn + "  not fond")
+
+    expected = 8
+    result = len(buttons)
     assert expected == result
