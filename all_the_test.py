@@ -85,3 +85,45 @@ def test09_scrollbars():
     result = hiding_btn.text
     assert expected == result
 
+
+def test10_dynamic_table():
+    driver.get('http://uitestingplayground.com/DynamicTable')
+    expected = driver.find_element(By.CLASS_NAME, "bg-warning").text.split(": ")[1]
+    columns = driver.find_elements(By.XPATH, "//span[@role='columnheader']")
+    cells = driver.find_elements(By.XPATH, "//span[@role='cell']")
+    result, x, y = "0", 0, 0
+    for colum in columns:
+        if colum.text == "CPU":
+            break
+        else:
+            x = x + 1
+    for cell in cells:
+        if cell.text == "Chrome":
+            y = y + x
+            break
+        else:
+            y = y + 1
+    result = cells[y].text
+    assert expected == result
+
+
+def test11_verify_text():
+    driver.get('http://uitestingplayground.com/verifytext')
+    expected = "Welcome UserName!"
+    result = driver.find_element(By.XPATH, "//span[normalize-space(.)='Welcome UserName!']").text
+    assert expected == result
+
+
+def test12_progressbar():
+    driver.get('http://uitestingplayground.com/progressbar')
+    expected = "75%"
+    start_btn = driver.find_element(By.ID, "startButton")
+    stop_btn = driver.find_element(By.ID, "stopButton")
+    progress_bar = driver.find_element(By.ID, "progressBar")
+    start_btn.click()
+    now = progress_bar.text
+    while now != "75%":
+        now = progress_bar.text
+    stop_btn.click()
+    result = progress_bar.text
+    assert expected == result
