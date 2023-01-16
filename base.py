@@ -24,7 +24,7 @@ def verifai_txt(expected, result):
     try:
         assert expected == result
     except AssertionError:
-        screenshot("Assert Error")
+        screenshot("Expected: " + expected + "Result is: " + result)
         assert False
 
 
