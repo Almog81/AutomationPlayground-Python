@@ -76,3 +76,12 @@ def test08_text_input():
     result = button.text
     assert expected == result
 
+
+def test09_scrollbars():
+    driver.get('http://uitestingplayground.com/scrollbars')
+    expected = "Hiding Button"
+    hiding_btn = driver.find_element(By.CSS_SELECTOR, ".btn.btn-primary")
+    driver.execute_script("arguments[0].scrollIntoView(true);", hiding_btn)
+    result = hiding_btn.text
+    assert expected == result
+

@@ -15,5 +15,5 @@ def init_test():
     driver.maximize_window()
     driver.implicitly_wait(20)
     yield
-    # time.sleep(3)
+    time.sleep(3)
     driver.quit()
