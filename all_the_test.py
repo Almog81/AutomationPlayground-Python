@@ -1,6 +1,7 @@
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as ec
 from base import *
+import pyperclip
 
 
 def test01_dynamic_id():
@@ -183,3 +184,61 @@ def test14_sample_app():
     result = login_status.text
     verifai_txt(expected, result)
 
+
+def test15_mouseover():
+    driver.get('http://uitestingplayground.com/mouseover')
+    expected = "2"
+    click_me = driver.find_element(By.LINK_TEXT, "Click me")
+    action.move_to_element(click_me).click().click().perform()
+    result = driver.find_element(By.ID, "clickCount").text
+    verifai_txt(expected, result)
+
+
+def test16_non_breaking_space():
+    driver.get('http://uitestingplayground.com/nbsp')
+    expected = "My Button"
+    btn = driver.find_element(By.XPATH, "//button[text()='My\u00A0Button']")
+    btn.click()
+    result = driver.find_element(By.CSS_SELECTOR, ".btn.btn-primary").text
+    verifai_txt(expected, result)
+
+
+def test17_overlapped_element():
+    driver.get('http://uitestingplayground.com/overlapped')
+    expected = "Subject"
+
+    # Element
+    id = driver.find_element(By.ID, "id")
+    name = driver.find_element(By.ID, "name")
+    subject = driver.find_element(By.ID, "subject")
+
+    # Actions
+    driver.execute_script("arguments[0].scrollIntoView(true);", id)
+    id.send_keys("123456789")
+    driver.execute_script("arguments[0].scrollIntoView(true);", name)
+    name.send_keys("Almog Noach")
+    driver.execute_script("arguments[0].scrollIntoView(true);", subject)
+    subject.send_keys("Subject name: kuku")
+
+    # Assert
+    result = subject.accessible_name
+    verifai_txt(expected, result)
+
+
+def test18_shadow_dom():
+    driver.get('http://uitestingplayground.com/shadowdom')
+    # Element
+    s_dom = driver.find_element(By.XPATH, "//div[@class='container']/guid-generator")
+    generate_btn = s_dom.shadow_root.find_element(By.ID, "buttonGenerate")
+    copy_btn = s_dom.shadow_root.find_element(By.ID, "buttonCopy")
+    edit_field = s_dom.shadow_root.find_element(By.ID, "editField")
+
+    # Action
+    generate_btn.click()
+    copy_btn.click() # This button does not work on the Online Web,so we will do our own copy operation:
+    pyperclip.copy(edit_field.text)
+    expected = pyperclip.paste()
+
+    # Assert
+    result = edit_field.text
+    verifai_txt(expected, result)
